@@ -26,15 +26,15 @@ export default function LoginRegister({ setToken }) {
   }
 
   return (
-    <div className="min-h-screen bg-yellow-200 flex flex-col items-center justify-center">
-      <form className="bg-white p-10 rounded-lg shadow-lg flex flex-col gap-4 w-80" onSubmit={submit}>
-        <h2 className="text-2xl font-bold text-center mb-2">
+    <div className="min-h-screen bg-yellow-200 flex flex-col items-center justify-center font-cartoon">
+      <form className="bg-white/80 p-10 rounded-xl shadow-xl flex flex-col gap-4 w-80 border-2 border-gold" onSubmit={submit}>
+        <h2 className="text-2xl font-extrabold text-center mb-2 text-pitch">
           Football Rise ⚽
         </h2>
         <input
           type="text"
           placeholder="Usuario"
-          className="p-3 rounded border"
+          className="p-3 rounded border text-xl"
           value={username}
           onChange={e => setUsername(e.target.value)}
           required
@@ -42,13 +42,13 @@ export default function LoginRegister({ setToken }) {
         <input
           type="password"
           placeholder="Contraseña"
-          className="p-3 rounded border"
+          className="p-3 rounded border text-xl"
           value={password}
           onChange={e => setPassword(e.target.value)}
           required
         />
         <button
-          className="bg-green-500 text-white rounded p-3 font-bold hover:bg-green-600 transition"
+          className="bg-pitch text-gold rounded p-3 font-extrabold hover:bg-gold hover:text-pitch border-2 border-gold transition"
           type="submit"
         >
           {mode === "login" ? "Iniciar sesión" : "Registrarse"}

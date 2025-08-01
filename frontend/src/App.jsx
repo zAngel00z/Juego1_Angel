@@ -11,7 +11,6 @@ import LoginRegister from "./components/LoginRegister";
 const API_URL = "http://localhost:4000/api/user";
 
 function getBonusMultiplier(teams) {
-  // Simple: cada equipo desbloqueado da 10% más
   return 1 + 0.1 * teams.length;
 }
 
@@ -41,7 +40,7 @@ function App() {
       .then(r => r.json())
       .then(data => {
         setUser(data);
-        setMoney(Number(data.money) || 0)
+        setMoney(Number(data.money) || 0);
         setTotalClicks(data.total_clicks || 0);
         setUpgrades({ ...defaultUpgrades, ...data.upgrades });
         setUnlockedTeams(data.unlocked_teams || []);
@@ -59,7 +58,7 @@ function App() {
   useEffect(() => {
     if (!user) return;
     const interval = setInterval(() => {
-      setMoney(m => m + (upgrades.perSecond || 0) * getBonusMultiplier(unlockedTeams));
+      setMoney(m => Number(m) + (upgrades.perSecond || 0) * getBonusMultiplier(unlockedTeams));
     }, 1000);
     return () => clearInterval(interval);
   }, [user, upgrades, unlockedTeams]);
@@ -87,30 +86,28 @@ function App() {
     return () => clearTimeout(save);
   }, [money, totalClicks, upgrades, unlockedTeams, achievements, user, token]);
 
-  // Click principal
-  function handleClick(e) {
+  // Click principal: solo partículas
+  function handleClick({ x, y }) {
     if (!user) return;
     const amount = upgrades.perClick * getBonusMultiplier(unlockedTeams);
-    setMoney(m => m + amount);
+    setMoney(m => Number(m) + amount);
     setTotalClicks(c => c + 1);
-    // Partículas
     setParticles(particles => [
       ...particles,
-      { x: e.clientX, y: e.clientY, id: Date.now() + Math.random() },
+      { x, y, id: Date.now() + Math.random() },
     ]);
-    // Sonido
     setSound({ type: "click" });
   }
 
   // Mejoras
   function handleUpgrade(type, cost, value) {
     if (money < cost) return;
-    setMoney(m => m - cost);
+    setMoney(m => Number(m) - cost);
     setUpgrades(u => ({ ...u, [type]: (u[type] || 0) + value }));
     setSound({ type: "upgrade" });
   }
 
-  // Equipos (ejemplo simple)
+  // Equipos
   const teams = [
     { name: "Real Madrid", unlock: 0, emoji: "⚪️", bonus: "10% más" },
     { name: "Barcelona", unlock: 200, emoji: "🔵🔴", bonus: "10% más" },
@@ -119,7 +116,7 @@ function App() {
     { name: "PSG", unlock: 10000, emoji: "🔵🔴", bonus: "10% más" },
   ];
 
-  // Desbloqueo de equipos
+  // Desbloqueo de equipos (sin confetti)
   useEffect(() => {
     teams.forEach(team => {
       if (
@@ -128,13 +125,13 @@ function App() {
       ) {
         setUnlockedTeams(ut => [...ut, team.name]);
         setAchievements(a => [...a, `¡Desbloqueaste ${team.name}!`]);
-        setSound({ type: "achievement" });
+        setSound({ type: "team" });
       }
     });
     // eslint-disable-next-line
   }, [money]);
 
-  // Logros (simple)
+  // Logros (sin confetti)
   useEffect(() => {
     if (totalClicks >= 1 && !achievements.includes("Primer click")) {
       setAchievements(a => [...a, "Primer click"]);
@@ -182,7 +179,10 @@ function App() {
             money={money}
           />
           <div className="relative mt-6">
-            <CentralButton onClick={handleClick} amount={upgrades.perClick * getBonusMultiplier(unlockedTeams)} />
+            <CentralButton
+              onClick={handleClick}
+              amount={upgrades.perClick * getBonusMultiplier(unlockedTeams)}
+            />
             <ParticleMoney
               particles={particles}
               onDone={id => setParticles(particles => particles.filter(p => p.id !== id))}

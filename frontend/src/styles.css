@@ -3,6 +3,8 @@
 @tailwind utilities;
 
 body {
-  background: linear-gradient(135deg, #f6d365 0%, #fda085 100%);
+  background: linear-gradient(135deg, #178A50 0%, #FFD700 100%);
   min-height: 100vh;
+  font-family: 'Baloo 2', cursive;
+  cursor: url('https://cdn-icons-png.flaticon.com/32/3135/3135715.png'), auto;
 }
